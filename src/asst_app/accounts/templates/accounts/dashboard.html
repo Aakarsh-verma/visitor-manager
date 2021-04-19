@@ -1,0 +1,34 @@
+{% extends 'accounts/main.html' %}
+
+{% block content %}
+
+{% include 'accounts/status.html' %}
+<br>
+
+<div class="mx-auto row">
+    <div class="col-md-7">
+        <h5>Latest Visitors</h5>
+        <hr>
+        <div class="card card-body">
+            <table class="table">
+                <thead>
+                    <tr class="text-light bg-primary">
+                        <th>Visitor</th>
+                        <th>Entry Date</th>
+                        <th>Entry Time</th>
+                        <th>Temperature</th>
+                    </tr>
+                </thead>
+                {% for i in validvisitors %}
+                    <tr>
+                        <td>{{i.name}}</td>
+                        <td>{{i.entry_date}}</td>
+                        <td>{{i.entry_time}}</td>
+                        <td>{{i.temp}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

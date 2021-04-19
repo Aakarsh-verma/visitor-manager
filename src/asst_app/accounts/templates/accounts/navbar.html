@@ -1,0 +1,16 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color:black">
+    <!-- <a class="navbar-brand" href="{% url 'dashboard' socinfo.id %}"><img src="{% static 'img/newlogo.jpg' %}" alt="logo" style="max-width: 35pt; max-height: 35pt;"></a> -->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" href="{% url 'dashboard' socinfo.id %}">Dashboard <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link" href="{% url 'visitor' socinfo.id %}">Visitors</a>
+        <a class="nav-item nav-link" href="{% url 'society' socinfo.id %}">Society</a>
+        <!-- <a class="nav-item nav-link disabled" href="#">Disabled</a> -->
+      </div>
+    </div>
+</nav>

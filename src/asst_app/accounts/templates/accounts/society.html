@@ -1,0 +1,50 @@
+{% extends 'accounts/main.html' %}
+{% block content %}
+
+	<br>
+
+<div class="row">
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Society:</h5>
+			<hr>
+            <p>{{socinfo.name}}</p>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="">Update Customer</a>
+
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Contact Information</h5>
+			<hr>
+			<p>Secretary: {{socinfo.sec_name}}</p>
+			<p>Email: {{socinfo.email}}</p>
+		</div>
+	</div>
+
+	<div class="col-md">
+		<div class="card card-body">
+			<h5>Address</h5>
+			<hr>
+			<h1 style="text-align: center;padding: 10px">{{socinfo.address}}</h1>
+		</div>
+	</div>
+</div>
+
+
+<br>
+<!-- <div class="row">
+	<div class="col">
+		<div class="card card-body">
+			<form method="get">
+
+		    <button class="btn btn-primary" type="submit">Search</button>
+		  </form>
+		</div>
+	</div>
+	
+</div> -->
+<br>
+
+{% endblock content %}

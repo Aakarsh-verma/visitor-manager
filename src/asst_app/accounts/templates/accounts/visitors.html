@@ -1,0 +1,85 @@
+{% extends 'accounts/main.html' %}
+{% block content %}
+
+<br>
+
+<div class="mx-auto row">
+    <div class="col-md-6">
+        <h5>Allowed Visitors</h5>
+        <div class="row">
+            <div class="col">
+                <div class="card card-body">
+                    <form method="get">
+                        {{myFilter.form}}
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+                </div>
+            </div>
+            
+        </div>
+        <hr>
+        <div class="card card-body">
+            <table class="table">
+                <thead>
+                    <tr class="text-light bg-primary">              
+                        <th>Visitor</th>
+                        <th>Entry Date</th>
+                        <th>Entry Time</th>
+                        <th>Temperature</th>
+                    </tr>
+                    {% for i in validvisitors %}
+                        <tr>
+                            <td>{{i.name}}</td>
+                            <td>{{i.entry_date}}</td>
+                            <td>{{i.entry_time}}</td>
+                            <td>{{i.temp}}</td>
+                        </tr>
+                    {% endfor %}
+                </thead>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <h5>Denied Visitors</h5>
+        <div class="row">
+            <div class="col">
+                <div class="card card-body">
+                    <form method="get">
+
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </form>
+                </div>
+            </div>
+            
+        </div>
+        <hr>
+        <div class="card card-body">
+            <table class="table">
+                <thead>
+                    <tr class="text-light bg-primary">
+                        <th>Visitor</th>
+                        <th>Entry Date</th>
+                        <th>Entry Time</th>
+                        <th>Temperature</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for i in invalidvisitors %}
+                        <tr>
+                            <td>{{i.name}}</td>
+                            <td>{{i.entry_date}}</td>
+                            <td>{{i.entry_time}}</td>
+                            {% if i.temp > 0.0 %}
+                            <td>{{i.temp}}</td>
+                            {% else %}
+                            <td>N/A</td>
+                            {% endif%}
+                            <td>{{i.status}}</td>
+                        </tr>
+                    {% endfor %}
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}
