@@ -1,26 +1,93 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from .models import *
 from .filters import ValidVisitorFilter
+from .forms import *
 
-def login(request):
+
+def landing_page(request):
+    return render(request, 'accounts/landing.html')
+
+def login_view(request):
     context = {}
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            
+            if Society.objects.filter(user=user).exists():
+                socinfo = Society.objects.get(user=user)
+                url = "/dashboard/{}/".format(str(socinfo.id))
+                return redirect(url)
+            else:
+                return redirect('socdetails')
+        
+
+    
     return render(request, 'accounts/login.html', context)
 
-def register(request):
+def register_view(request):
     context = {}
-    form = UserCreationForm(request.POST)
+    
+    form = CreateUserForm(request.POST)
     if form.is_valid():
         form.save()
-    context['form'] = form
+        user = form.cleaned_data.get('username')
+        messages.success(request, 'Account was created for '+ user)
 
+        return redirect('login')
+    context['form'] = form
+    
     return render(request, 'accounts/register.html', context)
 
+@login_required(login_url='login')
+def logoutUser(request):
+    logout(request)
+    return redirect('landingpage')
 
+@login_required(login_url='login')
+def regsociety(request):
+    context = {}
+    
+    user = request.user
+    if Society.objects.filter(user=user).exists():
+        socinfo = Society.objects.get(user=user)
+        url = "/dashboard/{}/".format(str(socinfo.id))
+        return redirect(url)
+    
+    context['user'] = user
+    
+    form = CreateSocietyForm(request.POST)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Society was created for '+ user)
+
+        socinfo = Society.objects.get(user=user)
+        url = "/dashboard/{}/".format(str(socinfo.id))
+        return redirect(url)
+    else:
+        messages.info(request, 'Please enter all the details correctly')
+    context['form'] = form
+    return render(request, 'accounts/details.html', context)
+
+@login_required(login_url='login')
 def home(request, pk):
     context = {}
+
+    user = request.user
+
     socinfo = Society.objects.get(id=pk)
+
     context['socinfo'] = socinfo
 
     validvisitors = ValidVisitor.objects.filter(soc_name_id=pk).order_by('entry_date', 'entry_time').reverse()[:2]
@@ -42,6 +109,7 @@ def home(request, pk):
     
     return render(request, 'accounts/dashboard.html', context)
 
+@login_required(login_url='login')
 def visitors(request, pk):
     context = {}
     socinfo = Society.objects.get(id=pk)
@@ -60,6 +128,7 @@ def visitors(request, pk):
 
     return render(request, 'accounts/visitors.html', context)
 
+@login_required(login_url='login')
 def society(request, pk):
     context = {}
     socinfo = Society.objects.get(id=pk)

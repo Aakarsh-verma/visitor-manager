@@ -1,0 +1,4 @@
+venv/
+src/asst_app/accounts/__pycache__
+src/asst_app/asst_app/__pycache__
+src/asst_app/accounts/migrations/__pycache__

@@ -7,9 +7,9 @@ from datetime import time,timedelta
 class Society(models.Model):
     name = models.CharField(max_length=200)
     sec_name = models.CharField(max_length=200)
-    email = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
     date_created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
