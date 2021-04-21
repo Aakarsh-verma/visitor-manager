@@ -1,4 +1,4 @@
-{% extends 'accounts/main.html' %}
+{% extends 'main.html' %}
 {% block content %}
 
 	<br>
@@ -9,7 +9,7 @@
 			<h5>Society:</h5>
 			<hr>
             <p>{{socinfo.name}}</p>
-			<a class="btn btn-outline-info  btn-sm btn-block" href="">Update Customer</a>
+			<a class="btn btn-outline-info  btn-sm btn-block" href="">Update Info</a>
 
 		</div>
 	</div>
@@ -19,7 +19,7 @@
 			<h5>Contact Information</h5>
 			<hr>
 			<p>Secretary: {{socinfo.sec_name}}</p>
-			<p>Email: {{socinfo.email}}</p>
+			<p>Email: {{socinfo.user.email}}</p>
 		</div>
 	</div>
 

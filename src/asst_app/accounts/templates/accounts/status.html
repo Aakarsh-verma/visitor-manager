@@ -1,19 +1,119 @@
+{% load static %}
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+    <title>Admin Dashboard</title>
+  
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/a3457e581b.js" crossorigin="anonymous"></script>
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'css/adminlte.min.css' %}">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  
+</head>
+<body class="hold-transition sidebar-mini">
+  
+    <div id="refreshdash">
+    <h5 class="mb-2 mt-4 mx-2">Quick Info<br>
+        <div class="row mx-1" id="summary-div">
+            <div class="col-lg-3 col-6">
+            
+            <!-- small card -->
+                <div id="refreshdash"></div>
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{visitorstoday}}<sup style='font-size: 20px'></sup></h3>                   
+                        <p>Today's Visitor Count</p>
+                    </div>
+                    <div class="icon">
+                    <i class="fas fa-user-friends"></i>
+                    </div>     
+                </div>
+            
+            </div>
+          
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+
+            <!-- small card -->
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{newvisitor}}<sup style='font-size: 20px'></sup></h3>
+                        <p>New Visitors</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-plus"></i>
+                    </div>
+             
+                </div>
+          </div>
+
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+
+            <!-- small card -->
+            <div class="small-box bg-warning">
+                <div class="inner">
+                    <h3>{{nomasktoday}}<sup style='font-size: 20px'></sup></h3> 
+                    <p>Entry Denied(No Mask)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-ban"></i>
+                </div>
+             
+            </div>
+          </div>
+
+          <!-- ./col -->
+          <div class="col-lg-3 col-6">
+
+            <!-- small card -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>{{temptoday}}<sup style='font-size: 20px'></sup></h3>  
+                    <p>Entry Denied (High Temperature)</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-exclamation-circle"></i>
+                </div>
+             
+            </div>
+           </div>
+          <!-- ./col -->
+        </div>
+        <!-- /.row -->  
+    </div>
+</body>
+  
+          
+  
+  
+  
+  
+  
+  
+  
+  
+  
+<!--   
 <br>
 
 <div class="row">
-    <div class="col">
-        <div class="col-md">
-            <div class="card text-center text-white mb-3" id="Visits-Today">
-                <div class="card-header bg-success">
-                    <h5 class="card-title">Allowed Visitors</h5>
-                </div>
-                <div class="card-body" style="background-color:#007e33;">
-                    <h3 class="card-title">{{visitorstoday}}</h3>
-                </div>
-            </div>
-        </div>        
-    </div>
-    <div class="col">
+    <div class="small-box bg-info">
+        <div class="inner">
+        <h3>{{visitorstoday}}<sup style='font-size: 20px'></sup></h3>
+          <p>Today's Visitor Count</p>
+        </div>
+        <div class="icon">
+          <i class="fas fa-user-friends"></i>
+        </div>
+        
+      </div>
+      <div class="col-lg-3 col-6">
         <div class="col-md">
             <div class="card text-center text-white mb-3" id="New-Visits">
                 <div class="card-header bg-info">
@@ -49,4 +149,4 @@
             </div>
         </div>        
     </div>
-</div>
+</div> -->

@@ -1,14 +1,66 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.views.generic import View
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+
 from datetime import datetime
 from .models import *
 from .filters import ValidVisitorFilter
 from .forms import *
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+# class ChartView(View):
+#     def get(self, request, *args, **kwargs):
+#         return render(request, 'accounts/chart.html')
+
+class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, pk, format=None):
+        
+        labels = []
+        chartLabel = "visitor data"
+        chartdata = []
+        pk = pk
+        # soc = Society.objects.filter(user=user.id)
+        
+        tod = datetime.today().date()
+        n = 6
+        for i in range(0, n):
+            noofdays = n-i
+            that_date = tod - timedelta(days=noofdays)
+            labels.append(str(that_date))
+            visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
+            if visitor.exists():
+                chartdata.append(visitor.count())
+            else:
+                chartdata.append(0)
+        labels.append(str(tod))
+        visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
+        if visitor.exists():
+            chartdata.append(visitor.count())
+        else:
+            chartdata.append(0)
+        data = {
+            'labels': labels,
+            'chartLabel':chartLabel,
+            'chartdata' : chartdata,
+            'pk':pk,
+        }
+        return Response(data)
+    
+        # else:
+        #     return redirect('socdetails')
+
+        
 
 
 def landing_page(request):
@@ -110,9 +162,11 @@ def home(request, pk):
     return render(request, 'accounts/dashboard.html', context)
 
 @login_required(login_url='login')
-def visitors(request, pk):
+def visitors(request):
     context = {}
-    socinfo = Society.objects.get(id=pk)
+    user = request.user
+
+    socinfo = Society.objects.get(user=user)
     validvisitors = ValidVisitor.objects.all().order_by('entry_date', 'entry_time').reverse()
     invalidvisitors = InvalidVisitor.objects.all().order_by('entry_date', 'entry_time').reverse()
 
@@ -129,9 +183,10 @@ def visitors(request, pk):
     return render(request, 'accounts/visitors.html', context)
 
 @login_required(login_url='login')
-def society(request, pk):
+def society(request):
     context = {}
-    socinfo = Society.objects.get(id=pk)
+    user = request.user
+    socinfo = Society.objects.get(user=user)
     context['socinfo'] = socinfo
 
     return render(request, 'accounts/society.html', context)
