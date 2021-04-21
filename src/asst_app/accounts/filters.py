@@ -1,12 +1,20 @@
 import django_filters
-from django_filters import DateFilter, TimeFilter, CharFilter
+from django_filters import DateFilter, TimeFilter, CharFilter, NumberFilter
 from .models import *
+from django import forms
 
 class ValidVisitorFilter(django_filters.FilterSet):
     name = CharFilter(field_name="name", lookup_expr='icontains')
     entry_date = DateFilter(field_name="entry_date", lookup_expr='gte')
-    entry_time = TimeFilter(field_name="entry_time", lookup_expr='gte')
+    temp = NumberFilter(field_name="temp", lookup_expr='gte')
+       
     class Meta:
         model = ValidVisitor
         fields = '__all__'
-        exclude = ['soc_name']
+        exclude = ['entry_time','soc_name']
+
+        widgets = {
+            'name' : forms.TextInput(attrs={"class": "form-control"}),
+            'entry_date' : forms.DateInput(attrs={"class": "form-control"}),
+            'temp' : forms.NumberInput(attrs={"class": "form-control"}),
+        }

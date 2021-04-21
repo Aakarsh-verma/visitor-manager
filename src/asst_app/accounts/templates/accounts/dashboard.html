@@ -1,15 +1,15 @@
 {% extends 'main.html' %}
-
+{% load static %}
 {% block content %}
 
 {% include 'accounts/status.html' %}
 <br>
-
-<div class="mx-auto row">
+<title>Admin Dashboard</title>
+<div class="row">
     <div class="col-md-7">
-        <h5>Latest Visitors</h5>
+        <h5 class="mx-2">Latest Visitors</h5>
         <hr>
-        <div class="card card-body">
+        <div class="mx-auto card card-body">
             <table class="table">
                 <thead>
                     <tr class="text-light bg-primary">
@@ -30,6 +30,15 @@
             </table>
         </div>
     </div>
+    <div class="col-md-3 mx-auto">
+        <br><hr>
+        <div class="card border-dark mb-3">
+            <div class="card-body text-light bg-primary">
+              <div class="card-header">Today</div>
+              <h5 class="card-body" style="font-size:large;"><b>{{today}}</b></h5>
+            </div>
+    </div>
 </div>
+<br>
 {% include 'accounts/chart.html' %}
 {% endblock content %}

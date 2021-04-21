@@ -29,6 +29,7 @@ class ChartData(APIView):
         labels = []
         chartLabel = "visitor data"
         chartdata = []
+        anotherdata = []
         pk = pk
         # soc = Society.objects.filter(user=user.id)
         
@@ -37,29 +38,40 @@ class ChartData(APIView):
         for i in range(0, n):
             noofdays = n-i
             that_date = tod - timedelta(days=noofdays)
-            labels.append(str(that_date))
+            labels.append(str(that_date.strftime("%d %b")))
             visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
             if visitor.exists():
                 chartdata.append(visitor.count())
             else:
                 chartdata.append(0)
-        labels.append(str(tod))
+            denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
+            if denied.exists():
+                anotherdata.append(denied.count())
+            else:
+                anotherdata.append(0)
+        
+        
+        d = tod.strftime("%d %b")
+        labels.append(d)
         visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
         if visitor.exists():
             chartdata.append(visitor.count())
         else:
             chartdata.append(0)
+        denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
+        if denied.exists():
+            anotherdata.append(denied.count())
+        else:
+            anotherdata.append(0)
+
         data = {
             'labels': labels,
             'chartLabel':chartLabel,
             'chartdata' : chartdata,
+            'anotherdata':anotherdata,
             'pk':pk,
         }
         return Response(data)
-    
-        # else:
-        #     return redirect('socdetails')
-
         
 
 
@@ -83,8 +95,6 @@ def login_view(request):
                 return redirect(url)
             else:
                 return redirect('socdetails')
-        
-
     
     return render(request, 'accounts/login.html', context)
 
@@ -132,6 +142,7 @@ def regsociety(request):
     context['form'] = form
     return render(request, 'accounts/details.html', context)
 
+
 @login_required(login_url='login')
 def home(request, pk):
     context = {}
@@ -142,25 +153,27 @@ def home(request, pk):
 
     context['socinfo'] = socinfo
 
-    validvisitors = ValidVisitor.objects.filter(soc_name_id=pk).order_by('entry_date', 'entry_time').reverse()[:2]
+    validvisitors = ValidVisitor.objects.filter(soc_name_id=pk).order_by('entry_date', 'entry_time').reverse()[:5]
     
     curdate = datetime.today().date()
     visitorstoday = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate).count()
     newvisitor = NewVisitor.objects.filter(soc_name_id=pk).count()
     nomasktoday = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate, status="No Mask").count()
     temptoday = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate, status="High Temperature").count()
-
+    now= datetime.today().date().strftime("%d %b, %Y")
     context = {
         'socinfo'       : socinfo, 
         'visitorstoday' : visitorstoday,
         'validvisitors' : validvisitors,
         'newvisitor'    : newvisitor, 
         'nomasktoday'   : nomasktoday,
-        'temptoday'     : temptoday
+        'temptoday'     : temptoday,
+        'today'         : now,
         }
     
     return render(request, 'accounts/dashboard.html', context)
 
+#detailed visitor view
 @login_required(login_url='login')
 def visitors(request):
     context = {}
@@ -174,14 +187,15 @@ def visitors(request):
     validvisitors = myFilter.qs
 
     context = {
-        'socinfo': socinfo, 
-        'validvisitors': validvisitors, 
-        'invalidvisitors': invalidvisitors,
-        'myFilter': myFilter
+        'socinfo'           : socinfo, 
+        'validvisitors'     : validvisitors, 
+        'invalidvisitors'   : invalidvisitors,
+        'myFilter'          : myFilter,
         }
 
     return render(request, 'accounts/visitors.html', context)
 
+# soc general info
 @login_required(login_url='login')
 def society(request):
     context = {}
@@ -191,6 +205,7 @@ def society(request):
 
     return render(request, 'accounts/society.html', context)
 
+# entering validVisitor into db
 def validvisitorentry(request, pk, *args, **kwargs):
     context = {}
     socinfo = Society.objects.get(id=pk)
@@ -219,6 +234,7 @@ def validvisitorentry(request, pk, *args, **kwargs):
         
     return HttpResponse('Done')
 
+# entering InvalidVisitor into db
 def invalidvisitorentry(request, pk, *args, **kwargs):
     context = {}
 
