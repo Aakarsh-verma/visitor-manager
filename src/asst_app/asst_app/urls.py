@@ -20,5 +20,8 @@ from accounts import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
-    path('api/<str:pk>', views.ChartData.as_view()),
+    # path('api/<str:pk>', views.ChartData.as_view()),
+
+    # REST URLS
+    path('api/', include('accounts.api.urls')),
 ]
