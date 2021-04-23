@@ -12,14 +12,13 @@ from datetime import datetime
 from .models import *
 from .filters import ValidVisitorFilter
 from .forms import *
+from .decorators import unauthenticated_user
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-# class ChartView(View):
-#     def get(self, request, *args, **kwargs):
-#         return render(request, 'accounts/chart.html')
 
+# Send data through REST to charts.js
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
@@ -78,6 +77,7 @@ class ChartData(APIView):
 def landing_page(request):
     return render(request, 'accounts/landing.html')
 
+@unauthenticated_user
 def login_view(request):
     context = {}
     if request.method == 'POST':
@@ -98,6 +98,7 @@ def login_view(request):
     
     return render(request, 'accounts/login.html', context)
 
+@unauthenticated_user
 def register_view(request):
     context = {}
     
@@ -112,7 +113,7 @@ def register_view(request):
     
     return render(request, 'accounts/register.html', context)
 
-@login_required(login_url='login')
+@login_required(login_url='landingpage')
 def logoutUser(request):
     logout(request)
     return redirect('landingpage')
@@ -142,7 +143,7 @@ def regsociety(request):
     context['form'] = form
     return render(request, 'accounts/details.html', context)
 
-
+# Main Dashboard
 @login_required(login_url='login')
 def home(request, pk):
     context = {}
@@ -202,8 +203,20 @@ def society(request):
     user = request.user
     socinfo = Society.objects.get(user=user)
     context['socinfo'] = socinfo
+    form = EditSocietyInfoForm(request.POST)
+    if request.POST:
+        form = EditSocietyInfoForm(initial = {
+                'name': socinfo.name,
+                'sec_name': socinfo.sec_name,
+            })
+        if form.is_valid:
+            form.save()
+    
+    context['form'] = form
 
     return render(request, 'accounts/society.html', context)
+
+
 
 # entering validVisitor into db
 def validvisitorentry(request, pk, *args, **kwargs):
@@ -233,6 +246,7 @@ def validvisitorentry(request, pk, *args, **kwargs):
             ).delete()
         
     return HttpResponse('Done')
+
 
 # entering InvalidVisitor into db
 def invalidvisitorentry(request, pk, *args, **kwargs):
