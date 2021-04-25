@@ -1,8 +1,6 @@
 from django.urls import path
 from . import views
 urlpatterns = [
-    path('', views.landing_page, name='landingpage'),
-
     #auth urls
     path('register/', views.register_view, name='register'),
     path('register/details/', views.regsociety, name='socdetails'),
