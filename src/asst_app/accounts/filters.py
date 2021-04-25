@@ -12,9 +12,3 @@ class ValidVisitorFilter(django_filters.FilterSet):
         model = ValidVisitor
         fields = '__all__'
         exclude = ['entry_time','soc_name']
-
-        widgets = {
-            'name' : forms.TextInput(attrs={"class": "form-control"}),
-            'entry_date' : forms.DateInput(attrs={"class": "form-control"}),
-            'temp' : forms.NumberInput(attrs={"class": "form-control"}),
-        }

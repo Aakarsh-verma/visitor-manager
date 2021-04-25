@@ -1,29 +1,36 @@
 {% extends 'main.html' %}
 {% block content %}
-
+<title>{% block title %}Visitor Details{% endblock title %}</title>
 <br>
 
 <div class="mx-auto row">
     <div class="col-md-6">
         <h5>Allowed Visitors</h5>
         <div class="row">
-            <div class="col-sm-2">
-            <a data-toggle="collapse" class="mx-auto" style="color:black; margin-left: auto;" href="#collapse1">
-                <legend><i class="fa fa-filter"></i>Filters</legend>
-            </a>
-            </div>
+            <div class="col">
+                <a data-toggle="collapse" class="mx-auto" style="color:black; margin-left: auto;" href="#collapse1">
+                <legend legend><i class="fa fa-filter"></i>Filters</legend>
+                </a>
             
-            <div class="col panel-collapse collapse" id="collapse1">
-                <div class="card card-body form-group">
-                    <form method="get">
-                        
-                        {{myFilter.form.as_p}}
+            
+                <div class="panel-collapse collapse" id="collapse1">
+                    <div class="flex form-group">
+                        <form method="GET" class="form-inline">
+                            <div class="form-group">
+                                <input type="text" id="name" class="form-control" name="name" style="max-width:20em;" placeholder="Name.." value="">
+                            </div>
+                            <div class="form-group">
+                                <input type="date" id="entry_date" class="form-control" name="entry_date" style="max-width:20em;" value="">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="temp" class="form-control" name="temp" style="max-width:20em;" placeholder="Min Temp.." value="">
+                            </div>                        
 
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </form>
+                        <button class="btn btn-primary mx-2" type="submit">Search</button>
+                    </form>
+                    </div>
                 </div>
-            </div>
-            
+            </div>    
         </div>
         <hr>
         <div class="card card-body">

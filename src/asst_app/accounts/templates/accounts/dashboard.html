@@ -3,8 +3,7 @@
 {% block content %}
 
 {% include 'accounts/status.html' %}
-<br>
-<title>Admin Dashboard</title>
+
 <div class="row">
     <div class="col-md-7">
         <h5 class="mx-2">Latest Visitors</h5>
@@ -16,7 +15,7 @@
                         <th>Visitor</th>
                         <th>Entry Date</th>
                         <th>Entry Time</th>
-                        <th>Temperature</th>
+                        <th>Temp</th>
                     </tr>
                 </thead>
                 {% for i in validvisitors %}
