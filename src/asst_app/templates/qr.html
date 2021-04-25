@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+    <title>{% block title %}Generate QR for Entry{% endblock title %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="{% static 'css/qrstyle.css' %}">
+
+</head>
+	<body>
+	
+	<div class="d-flex p-2 bd-highlight">
+			<h3><strong>Generate QR for entry:</strong></h3>
+			<div class="input-field">
+				<h3>Please Fill-out All Fields</h3>
+				<form method="POST" action="" >{% csrf_token %}
+					<div class="form-group">
+						<label>Email</label>
+						<input type="email" class="form-control" name="mail" style="max-width:20em;" placeholder="Enter your Email" value="" required />
+					</div>
+					<div class="form-group">
+						<label>First Name</label>
+						<input type="text" class="form-control" name="fname" style="max-width:20em;" placeholder="First name" value="" required>
+					</div>
+                    <div class="form-group">
+						<label>Last Name</label>
+						<input type="text" class="form-control" name="lname" style="max-width:20em;" placeholder="Last name" value="" required>
+					</div>
+                    <div class="form-group">
+						<label>Mobile number</label>
+						<input type="text" class="form-control" name="number" style="max-width:20em;" placeholder="Enter your mobile number" value="" required>
+					</div>
+
+					<div class="form-group">
+						<input type="submit" name="submit" class="btn btn-danger submitBtn" style="width:20em; margin:0;" />
+					</div>
+					<div class="form-group">
+					<a href="{% url 'landingpage' %}">	<button type="button" name="submit" class="btn btn-success" style="width:20em; margin:0;">Return Home</button></a>
+					</div>
+				</form>
+			</div>
+			
+			
+			<div class="d-flex p-2 bd-highlight">
+			<div class="qr-field">
+				<h2 style="text-align:auto">QR Code Result: </h2>
+				
+					<div class="qrframe" style="border:2px solid black; width:210px; height:210px;">
+                        {% if qr_data %}
+							<img src="/media/{{qr_data}}.png" style="width:200px; height:200px;">
+                            <a class="btn btn-default submitBtn" style="width:210px; margin:5px 0;" href="{% url 'downloadqr' qr_data %}">Download QR Code</a>
+                        {% else %}
+                            <img alt="Enter details to get QR">
+                        {% endif %}
+                    </div>			
+			</div>
+			</div>
+			
+	
+	</body>
+
+{% endblock content %}

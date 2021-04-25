@@ -2,21 +2,24 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import View
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
-from datetime import datetime
 from .models import *
-from .filters import ValidVisitorFilter
 from .forms import *
+from .filters import ValidVisitorFilter
 from .decorators import unauthenticated_user
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
+from datetime import datetime
+from qrcode import *
+import mimetypes
 
 # Send data through REST to charts.js
 class ChartData(APIView):
@@ -75,7 +78,7 @@ class ChartData(APIView):
 
 
 def landing_page(request):
-    return render(request, 'accounts/landing.html')
+    return render(request, 'landing.html')
 
 @unauthenticated_user
 def login_view(request):
@@ -265,3 +268,31 @@ def invalidvisitorentry(request, pk, *args, **kwargs):
                 soc_name_id = pk
                 )
     return HttpResponse('Done')
+
+
+def generateqr(request):
+    context = {}
+    if request.method == 'POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        qr_data = str(fname)+'-'+str(lname)
+        img = make(qr_data)
+        qrpath = settings.MEDIA_ROOT+'/{}.png'.format(qr_data)
+        img.save(qrpath)
+        context = {
+            'qr_data' : qr_data,
+            'qrpath' : qrpath, 
+        }
+    return render(request, 'qr.html', context)
+
+def dloadqr(request, name):
+    imgpath      = settings.MEDIA_ROOT+'/{}.png'.format(name)
+    filename = '{}.png'.format(name)
+    fl = open(imgpath, 'rb')
+    mime_type, _ = mimetypes.guess_type(imgpath)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    try:
+        return response
+    except Exception:
+        HttpResponse("ERROR")

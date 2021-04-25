@@ -15,10 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts import views
+from django.conf import settings
+from django.conf.urls.static import static
+
+from accounts.views import ChartData, generateqr, landing_page, dloadqr
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('accounts.urls')),
-    path('api/<str:pk>', views.ChartData.as_view()),
+    path('', landing_page, name='landingpage'),
+    
+    path('api/<str:pk>/', ChartData.as_view()),
+    
+    path('generateqr/', generateqr, name="generate-qr"),
+    path('downloadqr/<str:name>/', dloadqr, name="downloadqr"),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
