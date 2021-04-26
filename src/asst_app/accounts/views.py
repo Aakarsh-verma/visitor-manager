@@ -21,64 +21,36 @@ from datetime import datetime
 from qrcode import *
 import mimetypes
 
-# Send data through REST to charts.js
-class ChartData(APIView):
-    authentication_classes = []
-    permission_classes = []
-
-    def get(self, request, pk, format=None):
-        
-        labels = []
-        chartLabel = "visitor data"
-        chartdata = []
-        anotherdata = []
-        pk = pk
-        # soc = Society.objects.filter(user=user.id)
-        
-        tod = datetime.today().date()
-        n = 6
-        for i in range(0, n):
-            noofdays = n-i
-            that_date = tod - timedelta(days=noofdays)
-            labels.append(str(that_date.strftime("%d %b")))
-            visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
-            if visitor.exists():
-                chartdata.append(visitor.count())
-            else:
-                chartdata.append(0)
-            denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
-            if denied.exists():
-                anotherdata.append(denied.count())
-            else:
-                anotherdata.append(0)
-        
-        
-        d = tod.strftime("%d %b")
-        labels.append(d)
-        visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
-        if visitor.exists():
-            chartdata.append(visitor.count())
-        else:
-            chartdata.append(0)
-        denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
-        if denied.exists():
-            anotherdata.append(denied.count())
-        else:
-            anotherdata.append(0)
-
-        data = {
-            'labels': labels,
-            'chartLabel':chartLabel,
-            'chartdata' : chartdata,
-            'anotherdata':anotherdata,
-            'pk':pk,
-        }
-        return Response(data)
-        
-
 
 def landing_page(request):
     return render(request, 'landing.html')
+
+def generateqr(request):
+    context = {}
+    if request.method == 'POST':
+        fname = request.POST['fname']
+        lname = request.POST['lname']
+        qr_data = str(fname)+'-'+str(lname)
+        img = make(qr_data)
+        qrpath = settings.MEDIA_ROOT+'/{}.png'.format(qr_data)
+        img.save(qrpath)
+        context = {
+            'qr_data' : qr_data,
+            'qrpath' : qrpath, 
+        }
+    return render(request, 'qr.html', context)
+
+def dloadqr(request, name):
+    imgpath      = settings.MEDIA_ROOT+'/{}.png'.format(name)
+    filename = '{}.png'.format(name)
+    fl = open(imgpath, 'rb')
+    mime_type, _ = mimetypes.guess_type(imgpath)
+    response = HttpResponse(fl, content_type=mime_type)
+    response['Content-Disposition'] = "attachment; filename=%s" % filename
+    try:
+        return response
+    except Exception:
+        HttpResponse("ERROR")
 
 @unauthenticated_user
 def login_view(request):
@@ -145,6 +117,60 @@ def regsociety(request):
         messages.info(request, 'Please enter all the details correctly')
     context['form'] = form
     return render(request, 'accounts/details.html', context)
+
+# Send data through REST to charts.js
+class ChartData(APIView):
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, pk, format=None):
+        
+        labels = []
+        chartLabel = "visitor data"
+        chartdata = []
+        anotherdata = []
+        pk = pk
+        # soc = Society.objects.filter(user=user.id)
+        
+        tod = datetime.today().date()
+        n = 6
+        for i in range(0, n):
+            noofdays = n-i
+            that_date = tod - timedelta(days=noofdays)
+            labels.append(str(that_date.strftime("%d %b")))
+            visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
+            if visitor.exists():
+                chartdata.append(visitor.count())
+            else:
+                chartdata.append(0)
+            denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=that_date)
+            if denied.exists():
+                anotherdata.append(denied.count())
+            else:
+                anotherdata.append(0)
+        
+        
+        d = tod.strftime("%d %b")
+        labels.append(d)
+        visitor = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
+        if visitor.exists():
+            chartdata.append(visitor.count())
+        else:
+            chartdata.append(0)
+        denied = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=tod)
+        if denied.exists():
+            anotherdata.append(denied.count())
+        else:
+            anotherdata.append(0)
+
+        data = {
+            'labels': labels,
+            'chartLabel':chartLabel,
+            'chartdata' : chartdata,
+            'anotherdata':anotherdata,
+            'pk':pk,
+        }
+        return Response(data)
 
 # Main Dashboard
 @login_required(login_url='login')
@@ -268,31 +294,3 @@ def invalidvisitorentry(request, pk, *args, **kwargs):
                 soc_name_id = pk
                 )
     return HttpResponse('Done')
-
-
-def generateqr(request):
-    context = {}
-    if request.method == 'POST':
-        fname = request.POST['fname']
-        lname = request.POST['lname']
-        qr_data = str(fname)+'-'+str(lname)
-        img = make(qr_data)
-        qrpath = settings.MEDIA_ROOT+'/{}.png'.format(qr_data)
-        img.save(qrpath)
-        context = {
-            'qr_data' : qr_data,
-            'qrpath' : qrpath, 
-        }
-    return render(request, 'qr.html', context)
-
-def dloadqr(request, name):
-    imgpath      = settings.MEDIA_ROOT+'/{}.png'.format(name)
-    filename = '{}.png'.format(name)
-    fl = open(imgpath, 'rb')
-    mime_type, _ = mimetypes.guess_type(imgpath)
-    response = HttpResponse(fl, content_type=mime_type)
-    response['Content-Disposition'] = "attachment; filename=%s" % filename
-    try:
-        return response
-    except Exception:
-        HttpResponse("ERROR")
