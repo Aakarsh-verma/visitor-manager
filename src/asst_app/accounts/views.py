@@ -9,6 +9,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 
+from django.db.models import Avg
+
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
 from .models import *
 from .forms import *
 from .filters import ValidVisitorFilter
@@ -20,7 +26,6 @@ from rest_framework.response import Response
 from datetime import datetime
 from qrcode import *
 import mimetypes
-
 
 def landing_page(request):
     return render(request, 'landing.html')
@@ -66,7 +71,7 @@ def login_view(request):
             
             if Society.objects.filter(user=user).exists():
                 socinfo = Society.objects.get(user=user)
-                url = "/dashboard/{}/".format(str(socinfo.id))
+                url = "/dashboard/"
                 return redirect(url)
             else:
                 return redirect('socdetails')
@@ -172,36 +177,79 @@ class ChartData(APIView):
         }
         return Response(data)
 
+
 # Main Dashboard
 @login_required(login_url='login')
-def home(request, pk):
+def home(request):
     context = {}
 
     user = request.user
-
-    socinfo = Society.objects.get(id=pk)
-
+    curdate = datetime.today().date()
+    socinfo = Society.objects.get(user=user)
     context['socinfo'] = socinfo
 
-    validvisitors = ValidVisitor.objects.filter(soc_name_id=pk).order_by('entry_date', 'entry_time').reverse()[:5]
+    latestvisitors = ValidVisitor.objects.filter(soc_name_id=socinfo.id).order_by('entry_date', 'entry_time').reverse()[:5]    
+    visitorstoday = ValidVisitor.objects.filter(soc_name_id=socinfo.id, entry_date=curdate)
+    newvisitor = NewVisitor.objects.filter(soc_name_id=socinfo.id)
+    nomasktoday = InvalidVisitor.objects.filter(soc_name_id=socinfo.id, entry_date=curdate, status="No Mask")
+    temptoday = InvalidVisitor.objects.filter(soc_name_id=socinfo.id, entry_date=curdate, status="High Temperature")
+    now = curdate.strftime("%d %b, %Y")
+
     
-    curdate = datetime.today().date()
-    visitorstoday = ValidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate).count()
-    newvisitor = NewVisitor.objects.filter(soc_name_id=pk).count()
-    nomasktoday = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate, status="No Mask").count()
-    temptoday = InvalidVisitor.objects.filter(soc_name_id=pk, entry_date=curdate, status="High Temperature").count()
-    now= datetime.today().date().strftime("%d %b, %Y")
+    total = visitorstoday.count()+nomasktoday.count()+temptoday.count()
+    if total > 0:
+        percentvalid = (visitorstoday.count()/total)*100
+        percentinvalid = ((total-visitorstoday.count())/total)*100
+        avgtemp = visitorstoday.aggregate(Avg('temp'))
+        context['stats'] = 'True'
+    
+    if request.POST:
+        invalidvisitorstoday = InvalidVisitor.objects.filter(soc_name_id=socinfo.id, entry_date=curdate)
+        context = {
+        'socinfo'             : socinfo, 
+        'visitorstoday'       : visitorstoday,
+        'newvisitor'          : newvisitor, 
+        'invalidvisitorstoday': invalidvisitorstoday,
+        'today'               : now,
+        'total'               : total,
+        'avgtemp'       : avgtemp['temp__avg'],
+        'percentvalid'  : format(percentvalid, '.2f'),
+        'percentinvalid': format(percentinvalid, '.2f'),
+        }
+        subject = 'Visitor Details of {}'.format(now)
+        html_message = render_to_string('accounts/snippets/report.html', context)
+        plain_message = strip_tags(html_message)
+        from_email = 'From <donotreplyreport@securotech.com>'
+        to = [user.email, ]
+        msg = EmailMultiAlternatives(subject, plain_message, from_email, [to])
+        msg.attach_alternative(html_message, "text/html")
+        msg.send()
+
     context = {
         'socinfo'       : socinfo, 
         'visitorstoday' : visitorstoday,
-        'validvisitors' : validvisitors,
+        'latestvisitors': latestvisitors,
         'newvisitor'    : newvisitor, 
         'nomasktoday'   : nomasktoday,
         'temptoday'     : temptoday,
         'today'         : now,
+        'avgtemp'       : avgtemp['temp__avg'],
+        'percentvalid'  : format(percentvalid, '.2f'),
+        'percentinvalid': format(percentinvalid, '.2f'),
         }
     
     return render(request, 'accounts/dashboard.html', context)
+
+# #Send report:
+# @login_required(login_url='login')
+# def send_report(request):
+#     context = {}
+#     curdate = datetime.today().date()
+#     user = request.user
+#     soc  = Society.objects.get(user=user)
+    
+    
+
 
 #detailed visitor view
 @login_required(login_url='login')
