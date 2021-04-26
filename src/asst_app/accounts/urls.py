@@ -20,7 +20,7 @@ urlpatterns = [
         template_name='password_reset_complete.html'), name='password_reset_complete'),
     
     # Dashboard Urls
-    path('dashboard/<str:pk>/', views.home, name='dashboard'),
+    path('dashboard/', views.home, name='dashboard'),
     path('visitors/', views.visitors, name='visitor'),
     path('society/', views.society, name='society'),
     

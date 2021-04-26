@@ -16,7 +16,11 @@
 <body class="hold-transition sidebar-mini">
   
     <div id="refreshdash">
-    <h5 class="mb-2 mt-4 mx-2">Quick Info<br><hr>
+    <h5 class="mb-2 mt-4 mx-2">Quick Info<br>
+        <form class="mt-4" action="" method="POST">{% csrf_token %}
+            <input class="btn btn-warning" type="submit" name="" id="" value="Send Report">
+        </form>
+        <hr>
         <div class="row mx-1" id="summary-div">
             <div class="col-lg-3 col-6">
             
@@ -24,7 +28,7 @@
                 <div id="refreshdash"></div>
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>{{visitorstoday}}<sup style='font-size: 20px'></sup></h3>                   
+                        <h3>{{visitorstoday.count}}<sup style='font-size: 20px'></sup></h3>                   
                         <p>Today's Visitor Count</p>
                     </div>
                     <div class="icon">
@@ -40,7 +44,7 @@
             <!-- small card -->
                 <div class="small-box bg-success">
                     <div class="inner">
-                        <h3>{{newvisitor}}<sup style='font-size: 20px'></sup></h3>
+                        <h3>{{newvisitor.count}}<sup style='font-size: 20px'></sup></h3>
                         <p>New Visitors</p>
                     </div>
                     <div class="icon">
@@ -56,7 +60,7 @@
             <!-- small card -->
             <div class="small-box bg-warning">
                 <div class="inner">
-                    <h3>{{nomasktoday}}<sup style='font-size: 20px'></sup></h3> 
+                    <h3>{{nomasktoday.count}}<sup style='font-size: 20px'></sup></h3> 
                     <p>Entry Denied(No Mask)</p>
                 </div>
                 <div class="icon">
@@ -72,7 +76,7 @@
             <!-- small card -->
             <div class="small-box bg-danger">
                 <div class="inner">
-                    <h3>{{temptoday}}<sup style='font-size: 20px'></sup></h3>  
+                    <h3>{{temptoday.count}}<sup style='font-size: 20px'></sup></h3>  
                     <p>Entry Denied (High Temperature)</p>
                 </div>
                 <div class="icon">

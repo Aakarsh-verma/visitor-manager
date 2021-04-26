@@ -1,0 +1,59 @@
+<h3>The Details of various entry attemptes at {{socinfo.name}} on {{now}}</h3>
+    <h4>Summary</h4>
+    {% if total > 0 %}
+    <p>Vaild entries: <b>{{percentvalid}} %</b></p>
+    <p>Avg. Temp: <b>{{avgtemp}} <sup>o</sup>C</b></p>
+    <p>Invaild entries: <b>{{percentinvalid}} %</b></p>
+    <h4>Allowed Visitors</h4>
+    <div>
+        <table class="table" style="border:solid black;">
+            <thead>
+                <tr style="background-color:#00c851;">
+                    <th style="color:aliceblue">Visitor</th>
+                    <th style="color:aliceblue">Entry Date</th>
+                    <th style="color:aliceblue">Entry Time</th>
+                    <th style="color:aliceblue">Temp</th>
+                </tr>
+            </thead>
+            {% for i in visitorstoday %}
+                <tr style="border:solid black;">
+                    <td>{{i.name}}</td>
+                    <td>{{i.entry_date}}</td>
+                    <td>{{i.entry_time}}</td>
+                    <td>{{i.temp}}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <h4>Denied Visitors</h4>
+    <div>
+        <table style="border:solid black;">
+            <thead>
+                <tr style="background-color: #ff3d00;">
+                    <th style="color:aliceblue">Visitor</th>
+                    <th style="color:aliceblue">Entry Date</th>
+                    <th style="color:aliceblue">Entry Time</th>
+                    <th style="color:aliceblue">Temp</th>
+                    <th style="color:aliceblue">Reason</th>
+                </tr>
+            </thead>
+            {% for i in invalidvisitorstoday %}
+            <tr>
+                <td>{{i.name}}</td>
+                <td>{{i.entry_date}}</td>
+                <td>{{i.entry_time}}</td>
+                {% if i.temp > 0.0 %}
+                <td>{{i.temp}}</td>
+                {% else %}
+                <td>N/A</td>
+                {% endif%}
+                <td>{{i.status}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <p>Nobody has visited the society yet.</p>
+    {% endif %}
+
+<p>This is an machine generated mail, do not reply!</p>
