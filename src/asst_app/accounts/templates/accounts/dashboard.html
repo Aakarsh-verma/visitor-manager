@@ -38,10 +38,12 @@
               <h5 class="card-body" style="font-size:large;">Vaild entries: <b>{{percentvalid}} %</b></h5>
               <h5 class="card-body" style="font-size:large;">Avg. Temp: <b>{{avgtemp}} <sup>o</sup>C</b></h5>
               <h5 class="card-body" style="font-size:large;">Invaild entries: <b>{{percentinvalid}} %</b></h5>
+              {% else %}
+              <h5 class="card-body" style="font-size:large;">No attempted entries yet</h5>
               {% endif %}
             </div>
+        </div>
     </div>
-</div>
 <br>
 {% include 'accounts/chart.html' %}
 {% endblock content %}

@@ -14,7 +14,13 @@
   
 </head>
 <body class="hold-transition sidebar-mini">
-  
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
     <div id="refreshdash">
     <h5 class="mb-2 mt-4 mx-2">Quick Info<br>
         <form class="mt-4" action="" method="POST">{% csrf_token %}

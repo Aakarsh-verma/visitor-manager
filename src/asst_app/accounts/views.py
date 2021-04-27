@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.views.generic import View
 
 from django.conf import settings
 from django.contrib import messages
@@ -27,6 +26,7 @@ from datetime import datetime
 from qrcode import *
 import mimetypes
 
+
 def landing_page(request):
     return render(request, 'landing.html')
 
@@ -36,7 +36,8 @@ def generateqr(request):
         fname = request.POST['fname']
         lname = request.POST['lname']
         qr_data = str(fname)+'-'+str(lname)
-        img = make(qr_data)
+        qr_data2 = 'name:'+qr_data
+        img = make(qr_data2)
         qrpath = settings.MEDIA_ROOT+'/{}.png'.format(qr_data)
         img.save(qrpath)
         context = {
@@ -197,11 +198,13 @@ def home(request):
 
     
     total = visitorstoday.count()+nomasktoday.count()+temptoday.count()
+    avgtemp = {}
     if total > 0:
         percentvalid = (visitorstoday.count()/total)*100
         percentinvalid = ((total-visitorstoday.count())/total)*100
         avgtemp = visitorstoday.aggregate(Avg('temp'))
-        context['stats'] = 'True'
+    else:
+        percentvalid, percentinvalid, avgtemp['temp__avg'] = 0, 0, 0
     
     if request.POST:
         invalidvisitorstoday = InvalidVisitor.objects.filter(soc_name_id=socinfo.id, entry_date=curdate)
@@ -212,7 +215,7 @@ def home(request):
         'invalidvisitorstoday': invalidvisitorstoday,
         'today'               : now,
         'total'               : total,
-        'avgtemp'       : avgtemp['temp__avg'],
+        'avgtemp'       : format(avgtemp['temp__avg'], '.2f'),
         'percentvalid'  : format(percentvalid, '.2f'),
         'percentinvalid': format(percentinvalid, '.2f'),
         }
@@ -233,7 +236,7 @@ def home(request):
         'nomasktoday'   : nomasktoday,
         'temptoday'     : temptoday,
         'today'         : now,
-        'avgtemp'       : avgtemp['temp__avg'],
+        'avgtemp'       : format(avgtemp['temp__avg'], '.2f'),
         'percentvalid'  : format(percentvalid, '.2f'),
         'percentinvalid': format(percentinvalid, '.2f'),
         }
