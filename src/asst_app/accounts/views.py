@@ -16,7 +16,7 @@ from django.utils.html import strip_tags
 
 from .models import *
 from .forms import *
-from .filters import ValidVisitorFilter
+from .filters import ValidVisitorFilter, InvalidVisitorFilter
 from .decorators import unauthenticated_user
 
 from rest_framework.views import APIView
@@ -266,6 +266,9 @@ def visitors(request):
 
     myFilter = ValidVisitorFilter(request.GET, queryset=validvisitors)
     validvisitors = myFilter.qs
+
+    nxtFilter = InvalidVisitorFilter(request.POST, queryset=invalidvisitors)
+    invalidvisitors = nxtFilter.qs
 
     context = {
         'socinfo'           : socinfo, 

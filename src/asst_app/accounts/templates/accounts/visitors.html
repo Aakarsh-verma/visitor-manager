@@ -1,4 +1,6 @@
 {% extends 'main.html' %}
+
+{% load static %}
 {% block content %}
 <title>{% block title %}Visitor Details{% endblock title %}</title>
 <br>
@@ -9,7 +11,8 @@
         <div class="row">
             <div class="col">
                 <a data-toggle="collapse" class="mx-auto" style="color:black; margin-left: auto;" href="#collapse1">
-                <legend legend><i class="fa fa-filter"></i>Filters</legend>
+                <legend legend><img src="{% static 'img/filter.svg' %}" alt="" srcset="">
+                    Filters</legend>
                 </a>
             
             
@@ -57,17 +60,37 @@
 
     <div class="col-md-6">
         <h5>Denied Visitors</h5>
-        <!-- <div class="row">
+        <div class="row">
             <div class="col">
-                <div class="card card-body">
-                    <form method="get">
-
-                    <button class="btn btn-primary" type="submit">Search</button>
-                </form>
-                </div>
-            </div>
+                <a data-toggle="collapse" class="mx-auto" style="color:black; margin-left: auto;" href="#collapse2">
+                <legend legend><img src="{% static 'img/filter.svg' %}" alt="" srcset="">
+                    Filters</legend>
+                </a>
             
-        </div> -->
+            
+                <div class="panel-collapse collapse" id="collapse2">
+                    <div class="flex form-group">
+                        <form method="POST" class="form-inline">{% csrf_token %}
+                            <div class="form-group">
+                                <input type="text" id="name" class="form-control" name="name" style="max-width:20em;" placeholder="Name.." value="">
+                            </div>
+                            <div class="form-group">
+                                <input type="date" id="entry_date" class="form-control" name="entry_date" style="max-width:20em;" value="">
+                            </div>
+                            <div class="form-group">
+                                <select class="form-control" id="status" name="status">
+                                    <option>...</option>
+                                    <option value="No Mask">No Mask</option>
+                                    <option value="High Temperature">High Temp</option>
+                                </select>
+                            </div>                        
+
+                        <button class="btn btn-primary mx-2" type="submit">Search</button>
+                    </form>
+                    </div>
+                </div>
+            </div>    
+        </div>
         <hr>
         <div class="card card-body">
             <table class="table">
@@ -76,7 +99,7 @@
                         <th>Visitor</th>
                         <th>Entry Date</th>
                         <th>Entry Time</th>
-                        <th>Temperature</th>
+                        <th>Temp</th>
                         <th>Reason</th>
                     </tr>
                     {% for i in invalidvisitors %}
@@ -86,10 +109,11 @@
                             <td>{{i.entry_time}}</td>
                             {% if i.temp > 0.0 %}
                             <td>{{i.temp}}</td>
+                            <td>High Temp</td>
                             {% else %}
                             <td>N/A</td>
-                            {% endif%}
                             <td>{{i.status}}</td>
+                            {% endif%}
                         </tr>
                     {% endfor %}
                 </thead>
