@@ -33,7 +33,7 @@
 			</button>
 			</div>
 			<div class="modal-body">
-				{% include 'snippet/form_errors.html' %}
+				{% include 'snippets/form_errors.html' %}
 			<form action="" method="POST">
 				{% csrf_token %}
 				{{form.as_p}}
