@@ -33,9 +33,13 @@
 					</form>
 
 				</div>
-					{% for message in messages %}
-					<p id="messages">{{message}}</p>
-					{% endfor %}
+				{% if messages %}
+				{% for message in messages %}
+				<div class="alert alert-{{ message.tags }}">
+					{{ message }}
+				</div>
+				{% endfor %}
+				{% endif %}
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
 						Don't have an account? <a href="{% url 'register' %}" class="ml-2">Sign Up</a>

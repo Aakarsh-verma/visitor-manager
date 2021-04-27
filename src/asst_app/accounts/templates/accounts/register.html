@@ -11,6 +11,7 @@
 				<div class="d-flex justify-content-center">
 					<h3 id="form-title">REGISTER ACCOUNT</h3>
 				</div>
+				{% include 'snippet/form_errors.html' %}
 				<div class="d-flex justify-content-center form_container">
 
 					<form method="POST" action="">
@@ -43,9 +44,13 @@
 				   		<div class="d-flex justify-content-center mt-3 login_container">
 				 			<input class="btn login_btn" type="submit" value="Register Account">
 				   		</div>
-						<!-- {% if form.errors %}
-          				{{form.errors}}
-						{% endif %} -->
+						{% if messages %}
+						{% for message in messages %}
+						<div class="alert alert-{{ message.tags }}">
+							{{ message }}
+						</div>
+						{% endfor %}
+						{% endif %}
 					</form>
 				</div>
 		

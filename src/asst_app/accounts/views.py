@@ -83,7 +83,7 @@ def login_view(request):
 def register_view(request):
     context = {}
     
-    form = CreateUserForm(request.POST)
+    form = CreateUserForm(request.POST or None)
     if form.is_valid():
         form.save()
         user = form.cleaned_data.get('username')
@@ -111,14 +111,11 @@ def regsociety(request):
     
     context['user'] = user
     
-    form = CreateSocietyForm(request.POST)
+    form = CreateSocietyForm(request.POST or None)
     if form.is_valid():
         form.save()
-        messages.success(request, 'Society was created for '+ user)
-
-        socinfo = Society.objects.get(user=user)
-        url = "/dashboard/"
-        return redirect(url)
+        messages.success(request, 'Your Society is registered')
+        return redirect('dashboard')
     else:
         messages.warning(request, 'Please enter all the details correctly')
     context['form'] = form
