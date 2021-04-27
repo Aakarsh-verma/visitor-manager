@@ -16,7 +16,7 @@ class CreateSocietyForm(ModelForm):
 class EditSocietyInfoForm(ModelForm):
     class Meta:
         model   = Society
-        fields  = ['name', 'sec_name']
+        fields  = ['name']
 
 class CreateUserForm(UserCreationForm):
     class Meta:

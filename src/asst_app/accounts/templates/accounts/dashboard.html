@@ -35,9 +35,9 @@
             <div class="card-body text-light bg-primary">
               <div class="card-header">Today <b>{{today}}</b></div>
               {% if visitorstoday.count > 0 %}
-              <h5 class="card-body" style="font-size:large;">Vaild entries: <b>{{percentvalid}} %</b></h5>
-              <h5 class="card-body" style="font-size:large;">Avg. Temp: <b>{{avgtemp}} <sup>o</sup>C</b></h5>
-              <h5 class="card-body" style="font-size:large;">Invaild entries: <b>{{percentinvalid}} %</b></h5>
+              <p class="card-body" style="font-size:large;">Vaild entries: <b>{{percentvalid}} %</b></p>
+              <p class="card-body" style="font-size:large;">Avg. Temp of Valid: <b>{{avgtemp}} <sup>o</sup>C</b></p>
+              <p class="card-body" style="font-size:large;">Invaild entries: <b>{{percentinvalid}} %</b></p>
               {% else %}
               <h5 class="card-body" style="font-size:large;">No attempted entries yet</h5>
               {% endif %}

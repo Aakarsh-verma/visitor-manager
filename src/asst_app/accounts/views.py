@@ -106,7 +106,7 @@ def regsociety(request):
     user = request.user
     if Society.objects.filter(user=user).exists():
         socinfo = Society.objects.get(user=user)
-        url = "/dashboard/{}/".format(str(socinfo.id))
+        url = "/dashboard/"
         return redirect(url)
     
     context['user'] = user
@@ -117,10 +117,10 @@ def regsociety(request):
         messages.success(request, 'Society was created for '+ user)
 
         socinfo = Society.objects.get(user=user)
-        url = "/dashboard/{}/".format(str(socinfo.id))
+        url = "/dashboard/"
         return redirect(url)
     else:
-        messages.info(request, 'Please enter all the details correctly')
+        messages.warning(request, 'Please enter all the details correctly')
     context['form'] = form
     return render(request, 'accounts/details.html', context)
 
@@ -243,17 +243,6 @@ def home(request):
     
     return render(request, 'accounts/dashboard.html', context)
 
-# #Send report:
-# @login_required(login_url='login')
-# def send_report(request):
-#     context = {}
-#     curdate = datetime.today().date()
-#     user = request.user
-#     soc  = Society.objects.get(user=user)
-    
-    
-
-
 #detailed visitor view
 @login_required(login_url='login')
 def visitors(request):
@@ -286,14 +275,11 @@ def society(request):
     user = request.user
     socinfo = Society.objects.get(user=user)
     context['socinfo'] = socinfo
-    form = EditSocietyInfoForm(request.POST)
-    if request.POST:
-        form = EditSocietyInfoForm(initial = {
-                'name': socinfo.name,
-                'sec_name': socinfo.sec_name,
-            })
-        if form.is_valid:
-            form.save()
+    
+    form = EditSocietyInfoForm(request.POST or None, instance=socinfo)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Society Info was updated')
     
     context['form'] = form
 

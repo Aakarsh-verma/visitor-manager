@@ -3,6 +3,13 @@
 <title>{% block title %}Society Profile{% endblock title %}</title>
 
 <br>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+	{{ message }}
+</div>
+{% endfor %}
+{% endif %}
 <div class="row">
 	<div class="col-md">
 		<div class="card card-body">
